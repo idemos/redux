@@ -1,17 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import store from "./store/store";
+import * as actions from "./store/bugs";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// dato che usiamo reduxtoolkit dobbiamo passara un oggetto
+// al createAction definito nello store/bug
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+//quando lo store cambia faccio un'azione
+const unsubscribe = store.subscribe(() => {
+  console.log('lo store è cambiato', store.getState());
+});
+
+store.dispatch(actions.bugAdded({description: 'prova bug 1'}));
+store.dispatch(actions.bugAdded({description: 'prova bug 2'}));
+store.dispatch(actions.bugAdded({description: 'prova bug 3'}));
+
+store.dispatch(actions.bugResolved({id: 1}));
+store.dispatch(actions.bugRemoved({id: 2}));
+store.dispatch(actions.bugRemoved({id: 3}));
+
+// blocca il subscribe 
+// non notifica piu quando cambia la ui
+// in questo caso lo store
+unsubscribe();
+
+console.log(store.getState().entities.bugs.list);
